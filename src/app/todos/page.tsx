@@ -1,15 +1,12 @@
 import TodoItem from "@/components/TodoItem";
-import { Todo } from "@/db/schema";
-import { db } from "@/db";
-import { todos } from "@/db/schema";
+import { getAllTodos } from "@/lib/db";
 import { delay } from "@/lib/utils";
 
 export const revalidate = 0;
 
 async function fetchTodos() {
   await delay();
-
-  return db.select().from(todos).all();
+  return getAllTodos();
 }
 
 export default async function TodosPage() {
@@ -20,7 +17,9 @@ export default async function TodosPage() {
       <h1 className="font-semibold font-heading text-xl text-center">
         Your Tasks
       </h1>
-      {todos.map((todo: Todo) => <TodoItem {...todo} key={todo.id} />)}
+      {todos.map((todo) => (
+        <TodoItem {...todo} key={todo._id} />
+      ))}
     </div>
   );
 }

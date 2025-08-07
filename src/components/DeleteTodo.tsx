@@ -1,27 +1,25 @@
-import { db } from "@/db";
-import { todos } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { deleteTodo } from "@/lib/db";
 import { redirect } from "next/navigation";
 
-async function deleteTodo(data: FormData) {
+async function deleteTodoAction(data: FormData) {
   "use server";
 
-  db.delete(todos).where(eq(todos.id, parseInt(data.get("id") as string)))
-    .run();
+  const id = data.get("id") as string;
+  await deleteTodo(id);
 
   redirect("/todos");
 }
 
-export default async function DeleteTodo({ id }: { id: number }) {
+export default async function DeleteTodo({ id }: { id: string }) {
   return (
-    <form action={deleteTodo} className="w-full">
+    <form action={deleteTodoAction} className="w-full">
       <button
         name="id"
         value={id}
         type="submit"
-        className="py-2 px-3 bg-red-400 hover:bg-red-300 transition-colors text-slate-900 rounded-xl font-semibold font-heading w-full"
+        className="py-3 px-6 bg-red-500 hover:bg-red-400 transition-colors text-white rounded-xl font-semibold font-heading w-full"
       >
-        Delete
+        Delete Task
       </button>
     </form>
   );

@@ -1,19 +1,49 @@
-import {
-  integer,
-  sqliteTable,
-  text,
-} from "drizzle-orm/sqlite-core";
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
-import { InferModel } from "drizzle-orm";
-import { db } from ".";
+import mongoose, { Schema, Document } from "mongoose";
 
-export const todos = sqliteTable("todo", {
-  id: integer("id").primaryKey(),
-  title: text("title"),
-  completed: integer("completed"),
-});
+export interface ITodo extends Document {
+  title: string;
+  description?: string;
+  completed: boolean;
+  priority: "low" | "medium" | "high";
+  dueDate?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-export type Todo = InferModel<typeof todos>;
-export type InsertTodo = InferModel<typeof todos, "insert">;
+const TodoSchema = new Schema<ITodo>(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    completed: {
+      type: Boolean,
+      default: false,
+    },
+    priority: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "medium",
+    },
+    dueDate: {
+      type: Date,
+      default: null,
+    },
+  },
+  {
+    timestamps: true,
+    collection: "todos",
+  }
+);
 
-migrate(db, { migrationsFolder: "src/db/migrations" });
+// Prevent mongoose from creating the model multiple times
+export const Todo =
+  mongoose.models.Todo || mongoose.model<ITodo>("Todo", TodoSchema);
+
+export type TodoType = ITodo;

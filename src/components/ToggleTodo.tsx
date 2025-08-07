@@ -1,38 +1,26 @@
-import { db } from "@/db";
-import { Todo, todos } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { toggleTodo } from "@/lib/db";
+import { ITodo } from "@/db/schema";
 import { redirect } from "next/navigation";
 
-async function giveUpTodo(data: FormData) {
+async function toggleTodoAction(data: FormData) {
   "use server";
-  
-  db.update(todos)
-    .set({ completed: 0 })
-    .where(eq(todos.id, parseInt(data.get("id") as string))).run();
-  
+
+  const id = data.get("id") as string;
+  await toggleTodo(id);
+
   redirect("/todos");
 }
 
-async function finishTodo(data: FormData) {
-  "use server";
-
-  db.update(todos)
-    .set({ completed: 1 })
-    .where(eq(todos.id, parseInt(data.get("id") as string))).run();
-  
-  redirect("/todos");
-}
-
-export default async function ToggleTodo({ id, completed }: Todo) {
+export default async function ToggleTodo({ _id, completed }: ITodo) {
   return (
-    <form action={completed ? giveUpTodo : finishTodo} className="w-full">
+    <form action={toggleTodoAction} className="w-full">
       <button
         name="id"
-        value={id}
+        value={_id}
         type="submit"
-        className="py-2 px-3 bg-slate-300 hover:bg-slate-200 transition-colors text-slate-900 rounded-xl font-semibold font-heading w-full"
+        className="py-3 px-6 bg-slate-300 hover:bg-slate-200 transition-colors text-slate-900 rounded-xl font-semibold font-heading w-full"
       >
-        {completed ? 'Give up' : 'Finish'}
+        {completed ? "Mark Incomplete" : "Mark Complete"}
       </button>
     </form>
   );
