@@ -1,4 +1,4 @@
-import TodoItem from "@/components/TodoItem";
+import TodoList from "@/components/TodoList";
 import { getAllTodos } from "@/lib/db";
 import { delay } from "@/lib/utils";
 import Link from "next/link";
@@ -61,27 +61,6 @@ export default async function TodosPage() {
         </div>
       </div>
 
-      {/* High Priority Alert */}
-      {highPriorityTodos.length > 0 && (
-        <div className="bg-orange-900/20 border border-orange-500/30 rounded-xl p-4">
-          <h3 className="text-orange-400 font-semibold mb-2">
-            ⚠️ High Priority Tasks ({highPriorityTodos.length})
-          </h3>
-          <div className="space-y-2">
-            {highPriorityTodos.slice(0, 3).map((todo) => (
-              <div key={todo._id} className="text-sm text-slate-300">
-                • {todo.title}
-              </div>
-            ))}
-            {highPriorityTodos.length > 3 && (
-              <div className="text-sm text-slate-400">
-                +{highPriorityTodos.length - 3} more high priority tasks
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Create New Task Button */}
       <div className="text-center">
         <Link
@@ -92,24 +71,8 @@ export default async function TodosPage() {
         </Link>
       </div>
 
-      {/* Tasks List */}
-      <div className="space-y-2">
-        {todos.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-slate-400 mb-4">
-              No tasks yet. Create your first task!
-            </p>
-            <Link
-              href="/todos/create"
-              className="inline-block py-2 px-4 bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-lg transition-colors"
-            >
-              Create Task
-            </Link>
-          </div>
-        ) : (
-          todos.map((todo) => <TodoItem {...todo} key={todo._id} />)
-        )}
-      </div>
+      {/* TodoList with Filtering */}
+      <TodoList todos={todos} />
     </div>
   );
 }

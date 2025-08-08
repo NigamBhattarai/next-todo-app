@@ -106,7 +106,6 @@ export default async function TodoPage({ params }: Props) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-        {/* @ts-expect-error Server Component */}
         <ToggleTodo {...todo} />
 
         <a
@@ -116,7 +115,6 @@ export default async function TodoPage({ params }: Props) {
           Edit Task
         </a>
 
-        {/* @ts-expect-error Server Component */}
         <DeleteTodo id={todo._id} />
       </div>
     </div>
