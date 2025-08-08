@@ -11,7 +11,12 @@ async function toggleTodoAction(data: FormData) {
   redirect("/todos");
 }
 
-export default async function ToggleTodo({ _id, completed }: ITodo) {
+interface ToggleTodoProps {
+  _id: string;
+  completed: boolean;
+}
+
+export default async function ToggleTodo({ _id, completed }: ToggleTodoProps) {
   return (
     <form action={toggleTodoAction} className="w-full">
       <button

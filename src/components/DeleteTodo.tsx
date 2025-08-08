@@ -1,26 +1,53 @@
-import { deleteTodo } from "@/lib/db";
-import { redirect } from "next/navigation";
+"use client";
 
-async function deleteTodoAction(data: FormData) {
-  "use server";
+import { useState, useTransition } from "react";
+import { deleteTodoAction } from "@/app/actions/deleteTodo";
 
-  const id = data.get("id") as string;
-  await deleteTodo(id);
+export default function DeleteTodo({ id }: { id: string }) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  redirect("/todos");
-}
+  function handleDelete() {
+    if (isDeleting || isPending) return;
 
-export default async function DeleteTodo({ id }: { id: string }) {
+    setIsDeleting(true);
+
+    // Use startTransition to handle the server action properly
+    startTransition(async () => {
+      // Add a small delay to show the animation before deletion
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Create a form data object and call the server action
+      const formData = new FormData();
+      formData.append("id", id);
+
+      await deleteTodoAction(formData);
+    });
+  }
+
+  const loading = isDeleting || isPending;
+
   return (
-    <form action={deleteTodoAction} className="w-full">
-      <button
-        name="id"
-        value={id}
-        type="submit"
-        className="py-3 px-6 bg-red-500 hover:bg-red-400 transition-colors text-white rounded-xl font-semibold font-heading w-full"
-      >
-        Delete Task
-      </button>
-    </form>
+    <button
+      onClick={handleDelete}
+      disabled={loading}
+      className={`
+        py-3 px-6 rounded-xl font-semibold font-heading w-full transition-all duration-300
+        ${
+          loading
+            ? "bg-red-600 text-white scale-95 opacity-50"
+            : "bg-red-500 hover:bg-red-400 text-white hover:scale-105"
+        }
+      `}
+    >
+      {loading ? (
+        <div className="flex items-center justify-center gap-2">
+          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          Deleting...
+        </div>
+      ) : (
+        "Delete Task"
+      )}
+    </button>
   );
 }

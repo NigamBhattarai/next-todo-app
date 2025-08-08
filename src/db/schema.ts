@@ -1,11 +1,12 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface ITodo extends Document {
   title: string;
   description?: string;
   completed: boolean;
-  priority: "low" | "medium" | "high";
+  priority: "High Priority" | "Medium Priority" | "Low Priority";
   dueDate?: Date;
+  completionDate?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,10 +29,14 @@ const TodoSchema = new Schema<ITodo>(
     },
     priority: {
       type: String,
-      enum: ["low", "medium", "high"],
-      default: "medium",
+      enum: ["High Priority", "Medium Priority", "Low Priority"],
+      default: "Medium Priority",
     },
     dueDate: {
+      type: Date,
+      default: null,
+    },
+    completionDate: {
       type: Date,
       default: null,
     },
@@ -42,7 +47,7 @@ const TodoSchema = new Schema<ITodo>(
   }
 );
 
-// Prevent mongoose from creating the model multiple times
+// Create or get the Todo model
 export const Todo =
   mongoose.models.Todo || mongoose.model<ITodo>("Todo", TodoSchema);
 

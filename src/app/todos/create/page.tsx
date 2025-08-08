@@ -7,8 +7,11 @@ export default async function CreatePage() {
 
     const title = data.get("title") as string;
     const description = data.get("description") as string;
-    const priority = data.get("priority") as "low" | "medium" | "high";
-    const dueDate = data.get("dueDate") as string;
+    const priority = data.get("priority") as
+      | "High Priority"
+      | "Medium Priority"
+      | "Low Priority";
+    const deadline = data.get("deadline") as string;
 
     if (!title.trim()) {
       throw new Error("Title is required");
@@ -17,8 +20,8 @@ export default async function CreatePage() {
     await createTodo({
       title: title.trim(),
       description: description.trim() || undefined,
-      priority: priority || "medium",
-      dueDate: dueDate ? new Date(dueDate) : undefined,
+      priority: priority || "Medium Priority",
+      dueDate: deadline ? new Date(deadline) : undefined,
     });
 
     redirect("/todos");
@@ -73,29 +76,32 @@ export default async function CreatePage() {
           <select
             id="priority"
             name="priority"
+            defaultValue="Medium Priority"
             className="w-full bg-transparent rounded-xl border border-slate-700 focus:border-slate-300 outline-none px-4 py-3 transition-colors"
           >
-            <option value="low">Low</option>
-            <option value="medium" selected>
-              Medium
-            </option>
-            <option value="high">High</option>
+            <option value="Low Priority">Low Priority</option>
+            <option value="Medium Priority">Medium Priority</option>
+            <option value="High Priority">High Priority</option>
           </select>
         </div>
 
         <div>
           <label
-            htmlFor="dueDate"
+            htmlFor="deadline"
             className="block text-sm font-medium text-slate-300 mb-2"
           >
-            Due Date
+            Deadline (Optional)
           </label>
           <input
-            id="dueDate"
+            id="deadline"
             type="datetime-local"
-            name="dueDate"
+            name="deadline"
             className="w-full bg-transparent rounded-xl border border-slate-700 focus:border-slate-300 outline-none px-4 py-3 transition-colors"
+            placeholder="When do you need to complete this task?"
           />
+          <p className="text-xs text-slate-400 mt-1">
+            Set a deadline for when this task should be completed
+          </p>
         </div>
 
         <button
